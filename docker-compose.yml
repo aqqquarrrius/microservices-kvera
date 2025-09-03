@@ -1,4 +1,5 @@
 
+
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
@@ -19,12 +20,55 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    healthcheck:
+      test: ["CMD", "kafka-topics", "--bootstrap-server", "kafka:9092", "--list"]
+      interval: 10s
+      retries: 10
+
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1508
+      POSTGRES_DB: user_service_db
+    ports:
+      - "5432:5432"
 
   mailhog:
     image: mailhog/mailhog
     container_name: mailhog
     ports:
-      - "1025:1025"   # SMTP порт (будет использовать notification-service)
-      - "8025:8025"   # Веб-интерфейс (можно открыть в браузере)
+      - "1025:1025"
+      - "8025:8025"
+
+  user-service:
+    build: ./user-service
+    container_name: user-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - postgres
+      - kafka
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/user_service_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 1508
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+
+  notification-service:
+    build: ./notification-service
+    container_name: notification-service
+    ports:
+      - "8083:8083"
+    depends_on:
+      - kafka
+      - mailhog
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_MAIL_HOST: mailhog
+      SPRING_MAIL_PORT: 1025
