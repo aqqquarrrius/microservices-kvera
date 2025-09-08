@@ -59,9 +59,10 @@ public class UserControllerTest {
         mockMvc.perform(get("/users")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].name", is(user1.getName())))
-                .andExpect(jsonPath("$[1].email", is(user2.getEmail())));
+                .andExpect(jsonPath("$._embedded.userDtoList", hasSize(2)))
+                .andExpect(jsonPath("$._embedded.userDtoList[0].name", is(user1.getName())))
+                .andExpect(jsonPath("$._embedded.userDtoList[1].email", is(user2.getEmail())))
+                .andExpect(jsonPath("$._links.self.href", containsString("/users")));
     }
 
     @Test
@@ -72,7 +73,10 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is(user1.getName())))
-                .andExpect(jsonPath("$.email", is(user1.getEmail())));
+                .andExpect(jsonPath("$.email", is(user1.getEmail())))
+                .andExpect(jsonPath("$._links.self.href", containsString("/users/1")))
+                .andExpect(jsonPath("$._links.update.href", containsString("/users/1")))
+                .andExpect(jsonPath("$._links.delete.href", containsString("/users/1")));
     }
 
     @Test
@@ -87,7 +91,8 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.name", is(createRequest.getName())))
-                .andExpect(jsonPath("$.email", is(createRequest.getEmail())));
+                .andExpect(jsonPath("$.email", is(createRequest.getEmail())))
+                .andExpect(jsonPath("$._links.self.href", containsString("/users/1")));
     }
 
     @Test
@@ -100,7 +105,8 @@ public class UserControllerTest {
                         .content(objectMapper.writeValueAsString(updateRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is(updateRequest.getName())))
-                .andExpect(jsonPath("$.email", is(updateRequest.getEmail())));
+                .andExpect(jsonPath("$.email", is(updateRequest.getEmail())))
+                .andExpect(jsonPath("$._links.self.href", containsString("/users/1")));
     }
 
     @Test

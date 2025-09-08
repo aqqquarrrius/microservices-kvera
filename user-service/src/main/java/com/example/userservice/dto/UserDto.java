@@ -1,14 +1,24 @@
 package com.example.userservice.dto;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
 
+@Schema(description = "DTO пользователя")
 public class UserDto {
+    @Schema(description = "ID пользователя", example = "1")
     private Long id;
+
+    @Schema(description = "Имя пользователя", example = "Иван Петров")
     private String name;
+
+    @Schema(description = "Email пользователя", example = "ivan@example.com")
     private String email;
+
+    @Schema(description = "Возраст пользователя", example = "42")
     private Integer age;
+
+    @Schema(description = "Дата создания аккаунта")
     private LocalDateTime createdAt;
 
     public UserDto() {}
