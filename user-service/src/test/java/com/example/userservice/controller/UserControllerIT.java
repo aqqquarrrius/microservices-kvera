@@ -44,15 +44,14 @@ public class UserControllerIT {
         userRepository.save(user1);
         userRepository.save(user2);
     }
-
     @Test
     void shouldReturnAllUsers() throws Exception {
         mockMvc.perform(get("/users")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].name", is(user1.getName())))
-                .andExpect(jsonPath("$[1].email", is(user2.getEmail())));
+                .andExpect(jsonPath("$._embedded.userDtoList", hasSize(2)))
+                .andExpect(jsonPath("$._embedded.userDtoList[0].name", is(user1.getName())))
+                .andExpect(jsonPath("$._embedded.userDtoList[1].email", is(user2.getEmail())));
     }
 
     @Test

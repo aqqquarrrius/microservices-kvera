@@ -1,5 +1,3 @@
-
-
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
@@ -46,29 +44,29 @@ services:
       - "1025:1025"
       - "8025:8025"
 
-  user-service:
-    build: ./user-service
-    container_name: user-service
-    ports:
-      - "8082:8082"
-    depends_on:
-      - postgres
-      - kafka
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/user_service_db
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: 1508
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-
-  notification-service:
-    build: ./notification-service
-    container_name: notification-service
-    ports:
-      - "8083:8083"
-    depends_on:
-      - kafka
-      - mailhog
-    environment:
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      SPRING_MAIL_HOST: mailhog
-      SPRING_MAIL_PORT: 1025
+#  user-service:
+#    build: ./user-service
+#    container_name: user-service
+#    ports:
+#      - "8082:8082"
+#    depends_on:
+#      - postgres
+#      - kafka
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/user_service_db
+#      SPRING_DATASOURCE_USERNAME: postgres
+#      SPRING_DATASOURCE_PASSWORD: 1508
+#      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+#
+#  notification-service:
+#    build: ./notification-service
+#    container_name: notification-service
+#    ports:
+#      - "8083:8083"
+#    depends_on:
+#      - kafka
+#      - mailhog
+#    environment:
+#      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+#      SPRING_MAIL_HOST: mailhog
+#      SPRING_MAIL_PORT: 1025
